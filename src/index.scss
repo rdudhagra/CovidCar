@@ -1,0 +1,9 @@
+$primary:       #9f5f80 !default;
+
+html, body, #root {
+  height: 100%;
+}
+
+@import "~bootswatch/dist/darkly/variables";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootswatch/dist/darkly/bootswatch";
