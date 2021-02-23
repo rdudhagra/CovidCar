@@ -28,7 +28,7 @@ function PointCloud() {
             angularThres: 0.01,
             transThres: 0.01,
             rate: 10.0,
-            fixedFrame: 'laser'
+            fixedFrame: '/laser'
         });
 
         // Setup the map client.
