@@ -28,11 +28,11 @@ function PointCloud() {
             angularThres: 0.01,
             transThres: 0.01,
             rate: 10.0,
-            fixedFrame: '/laser'
+            fixedFrame: Constants.TF_NAME
         });
 
         // Setup the map client.
-        const laserScan = new ROS3D.LaserScan({
+        const laserScan = new ROS3D.PointCloud2({
             ros: ros,
             tfClient: tfClient,
             rootObject: viewer.scene,
