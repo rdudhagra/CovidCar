@@ -1,6 +1,7 @@
 import React, { useEffect } from "react"
 import * as ROS3D from 'ros3d'
 import * as ROSLIB from 'roslib'
+import * as THREE from 'three'
 
 import * as Constants from "../../constants"
 
@@ -58,16 +59,16 @@ function PointCloud() {
         });
 
         // Topic for publishing robot commands
-        var cmdPos = new ROSLIB.Topic({
+        var cmdPose = new ROSLIB.Topic({
             ros: ros,
             name: Constants.COMMAND_TOPIC,
-            messageType: "geometry_msgs/Point"
+            messageType: "geometry_msgs/PoseStamped"
         });
 
         viewer.cameraControls.addEventListener("mousedown", (event3D) => {
             var domEvent = event3D.domEvent;
             domEvent.preventDefault();
-            console.log("Mouse event: ", event3D);
+            //console.log("Mouse event: ", event3D);
 
             // pos_x and pos_y are between -1 and 1, specified within the
             // rectangular bounding box of the viewer frame
@@ -77,25 +78,51 @@ function PointCloud() {
             switch (domEvent.button) {
                 case 0:
                     // Left mouse button
-                    var origin = event3D.mouseRay.origin;
-                    var direction = event3D.mouseRay.direction;
+                    var mouseOrigin = event3D.mouseRay.origin;
+                    var mouseDir = event3D.mouseRay.direction;
 
-                    // Find where mouse click intersects with the z=0 plane
+                    // Calculate position command, by finding where mouse click intersects with z=0 plane
                     // Alternatively, may want to use event3D.currentTarget and
                     // event3D.intersection to find nearest point on pointcloud
-                    var scaleFactor = origin.z / direction.z;
-                    var x = origin.x - scaleFactor * direction.x;
-                    var y = origin.y - scaleFactor * direction.y;
-                    var z = origin.z - scaleFactor * direction.z; // should be 0
-                    console.log("Mouse down: X ", x, ", Y ", y, ", Z ", z);
-                
-                    // Send position command to robot
-                    var position = new ROSLIB.Message({
-                        x: x,
-                        y: y,
-                        z: z
+                    var scaleFactor = mouseOrigin.z / mouseDir.z;
+                    // pos = mouseDir - scaleFactor * mouseOrigin;
+                    var pos = new THREE.Vector3().copy(mouseDir).multiplyScalar(-scaleFactor).add(mouseOrigin);
+
+                    // Calculate orientation command, so that the forward direction is the current camera
+                    // orientation, and the upwards direction is the +z axis
+                    // Same code as Quaternion.LookRotation in Unity
+                    var orient = new THREE.Quaternion();
+                    var up = new THREE.Vector3(0, 0, 1);
+                    mouseDir.normalize();
+
+                    if(up.equals(mouseDir)) {
+                        var v = mouseDir - up * up.dot(mouseDir);
+                        v.normalize();
+                        var q = new THREE.Quaternion().setFromUnitVectors(up, v);
+                        orient = new THREE.Quaternion().setFromUnitVectors(v, mouseDir).multiply(q);
+                    } else {
+                        orient = new THREE.Quaternion().setFromUnitVectors(up, mouseDir);
+                    }
+                    
+                    // Send position and orientation command to robot
+                    var timestamp = new Date();
+                    var secs = Math.floor(timestamp.getTime() / 1000);
+                    var nsecs = 1000000 * (timestamp.getTime() % 1000);
+                    var pose = new ROSLIB.Message({
+                        header: {
+                            stamp: {
+                                sec: secs,
+                                nsec: nsecs
+                            },
+                            frame_id: Constants.TF_NAME
+                        },
+                        pose: {
+                            position: pos,
+                            orientation: orient
+                        }
                     });
-                    cmdPos.publish(position);
+                    //console.log("Pose message: ", pose);
+                    cmdPose.publish(pose);
                     break;
 
                 case 1:
