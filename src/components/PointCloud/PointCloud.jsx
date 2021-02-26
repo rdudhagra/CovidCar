@@ -37,8 +37,24 @@ function PointCloud() {
             tfClient: tfClient,
             rootObject: viewer.scene,
             topic: Constants.POINTCLOUD_TOPIC,
-            material: { size: 0.01, color: 0xaaaaaa },
+            material: { size: 0.1, color: 0xaaaaaa },
             max_pts: 10000000
+        });
+
+        const global_plan = new ROS3D.Path({
+            ros: ros,
+            tfClient: tfClient,
+            rootObject: viewer.scene,
+            topic: Constants.GLOBAL_PLAN,
+            color: 0xFF0000,
+        });
+
+        const local_plan = new ROS3D.Path({
+            ros: ros,
+            tfClient: tfClient,
+            rootObject: viewer.scene,
+            topic: Constants.LOCAL_PLAN,
+            color: 0x00FF00 ,
         });
 
         // Topic for publishing robot commands
