@@ -36,7 +36,9 @@ function PointCloud() {
             ros: ros,
             tfClient: tfClient,
             rootObject: viewer.scene,
-            topic: Constants.POINTCLOUD_TOPIC
+            topic: Constants.POINTCLOUD_TOPIC,
+            material: { size: 0.01, color: 0xaaaaaa },
+            max_pts: 10000000
         })
     })
 
