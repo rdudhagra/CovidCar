@@ -73,7 +73,7 @@ function PointCloud() {
             messageType: "geometry_msgs/PoseStamped"
         });
 
-        viewer.cameraControls.addEventListener("mousedown", (event3D) => {
+        viewer.cameraControls.addEventListener("dblclick", (event3D) => {
             var domEvent = event3D.domEvent;
             domEvent.preventDefault();
             console.log("Mouse event: ", event3D);
