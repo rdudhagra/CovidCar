@@ -7,3 +7,10 @@ html, body, #root {
 @import "~bootswatch/dist/darkly/variables";
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/darkly/bootswatch";
+
+:export {
+  primary: $primary;
+  secondary: $secondary;
+  dark: $dark;
+  light: $light;
+}

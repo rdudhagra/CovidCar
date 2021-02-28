@@ -1,4 +1,5 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
+import { Row } from "react-bootstrap"
 import * as ROS3D from 'ros3d'
 import * as ROSLIB from 'roslib'
 import * as THREE from 'three'
@@ -9,7 +10,13 @@ const DIV_ID = "pointcloud_viewer";
 
 function PointCloud() {
 
+    const divContainer = useRef(null);
+
     useEffect(() => {
+        // Clear div so that hot reloading works
+        divContainer.current.innerHTML = '';
+
+        
         // Connect to ROS.
         var ros = new ROSLIB.Ros({
             url: Constants.WEBSOCKET_URL
@@ -18,9 +25,10 @@ function PointCloud() {
         // Create the main viewer.
         const viewer = new ROS3D.Viewer({
             divID: DIV_ID,
-            width: 800,
-            height: 600,
-            antialias: true
+            width: divContainer.current.clientWidth,
+            height: divContainer.current.clientHeight,
+            antialias: true,
+            alpha: 0.000001
         });
 
         // Setup a client to listen to TFs.
@@ -137,7 +145,7 @@ function PointCloud() {
     })
 
     return (
-        <div id={DIV_ID}></div>
+        <Row className="w-100 h-100" ref={divContainer} id={DIV_ID}></Row>
     );
 }
 
