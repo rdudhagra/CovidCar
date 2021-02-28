@@ -76,7 +76,7 @@ function PointCloud() {
         viewer.cameraControls.addEventListener("mousedown", (event3D) => {
             var domEvent = event3D.domEvent;
             domEvent.preventDefault();
-            //console.log("Mouse event: ", event3D);
+            console.log("Mouse event: ", event3D);
 
             // pos_x and pos_y are between -1 and 1, specified within the
             // rectangular bounding box of the viewer frame
@@ -118,18 +118,28 @@ function PointCloud() {
                     var nsecs = 1000000 * (timestamp.getTime() % 1000);
                     var pose = new ROSLIB.Message({
                         header: {
+                            seq: 0,
                             stamp: {
                                 sec: secs,
                                 nsec: nsecs
                             },
-                            frame_id: Constants.TF_NAME
+                            frame_id: "map",
                         },
                         pose: {
-                            position: pos,
-                            orientation: orient
+                            position: {
+                                x: pos.x,
+                                y: pos.y,
+                                z: 0
+                            },
+                            orientation: {
+                                x: 0,
+                                y: 0,
+                                z: orient.z,
+                                w: orient.w
+                            }
                         }
                     });
-                    //console.log("Pose message: ", pose);
+                    console.log("Pose message: ", pose);
                     cmdPose.publish(pose);
                     break;
 
