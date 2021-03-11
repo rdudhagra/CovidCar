@@ -3,9 +3,6 @@
 > Build18 2021 Project
 > <br>Waypoint-based teleop of a semi-autonomous robot
 
->[Development Website Link](https://develop.d3iyr92kufto7p.amplifyapp.com/)
-> <br>[Production Website Link](https://main.d3iyr92kufto7p.amplifyapp.com/)
-
 - [CovidCar Website](#covidcar-website)
   - [Development instructions](#development-instructions)
   - [Branch logic](#branch-logic)
